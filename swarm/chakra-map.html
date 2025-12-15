@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Chakra-Anatomy Map</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Courier New', monospace;
+            background: #0a0a0a;
+            color: #e0e0e0;
+            padding: 15px;
+            padding-bottom: 30px;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            overflow-x: hidden;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #00ffaa;
+            font-size: clamp(1.5rem, 5vw, 2rem);
+        }
+
+        .chakra-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .chakra {
+            background: #1a1a1a;
+            border: 2px solid #333;
+            border-radius: 8px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            touch-action: manipulation;
+            -webkit-touch-callout: none;
+            user-select: none;
+        }
+
+        .chakra:active {
+            border-color: #00ffaa;
+            transform: scale(0.98);
+        }
+
+        @media (hover: hover) {
+            .chakra:hover {
+                border-color: #00ffaa;
+                transform: translateX(10px);
+            }
+        }
+
+        .chakra.active {
+            border-color: #00ffaa;
+            background: #1a2a1a;
+        }
+
+        .chakra-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            gap: 10px;
+        }
+
+        .chakra-name {
+            font-size: clamp(1rem, 4vw, 1.3rem);
+            font-weight: bold;
+            flex: 1;
+        }
+
+        .chakra-color {
+            width: clamp(25px, 7vw, 30px);
+            height: clamp(25px, 7vw, 30px);
+            border-radius: 50%;
+            border: 2px solid #fff;
+            flex-shrink: 0;
+        }
+
+        .chakra-location {
+            color: #888;
+            margin-bottom: 10px;
+            font-size: clamp(0.85rem, 3vw, 1rem);
+        }
+
+        .chakra-details {
+            display: none;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #333;
+        }
+
+        .chakra.active .chakra-details {
+            display: block;
+        }
+
+        .detail-section {
+            margin-bottom: 12px;
+        }
+
+        .detail-label {
+            color: #00ffaa;
+            font-weight: bold;
+            margin-bottom: 5px;
+            font-size: clamp(0.9rem, 3.5vw, 1rem);
+        }
+
+        .detail-content {
+            color: #ccc;
+            line-height: 1.6;
+            font-size: clamp(0.85rem, 3vw, 0.95rem);
+        }
+
+        .detail-content ul {
+            list-style: none;
+            padding-left: 15px;
+        }
+
+        .detail-content li {
+            margin-bottom: 5px;
+        }
+
+        .detail-content li::before {
+            content: "→ ";
+            color: #00ffaa;
+        }
+
+        .instructions {
+            text-align: center;
+            color: #666;
+            margin-bottom: 20px;
+            font-style: italic;
+            font-size: clamp(0.85rem, 3vw, 1rem);
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+
+            h1 {
+                margin-bottom: 15px;
+            }
+
+            .chakra {
+                padding: 12px;
+            }
+
+            .chakra-container {
+                gap: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Chakra → Anatomy Map</h1>
+    <div class="instructions">Click any chakra to expand details. Click again to collapse.</div>
+
+    <div class="chakra-container">
+        <div class="chakra" data-chakra="crown">
+            <div class="chakra-header">
+                <span class="chakra-name">7. Sahasrara (Crown)</span>
+                <div class="chakra-color" style="background: linear-gradient(135deg, #9b59b6, #ffffff);"></div>
+            </div>
+            <div class="chakra-location">Top of head</div>
+            <div class="chakra-details">
+                <div class="detail-section">
+                    <div class="detail-label">Anatomical Correlate</div>
+                    <div class="detail-content">
+                        <ul>
+                            <li>Cerebral cortex (higher consciousness, integration)</li>
+                            <li>Pineal gland (melatonin, circadian rhythm, DMT synthesis)</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="detail-section">
+                    <div class="detail-label">Physiological Function</div>
+                    <div class="detail-content">
+                        Sleep-wake cycles, consciousness states, integration of all sensory/cognitive input
+                    </div>
+                </div>
+                <div class="detail-section">
+                    <div class="detail-label">Neurotransmitters</div>
+                    <div class="detail-content">Serotonin, melatonin, potentially endogenous tryptamines</div>
+                </div>
+                <div class="detail-section">
+                    <div class="detail-label">Energetic Function</div>
+                    <div class="detail-content">Connection to universal consciousness, transcendence of ego, unity experience</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="chakra" data-chakra="third-eye">
+            <div class="chakra-header">
+                <span class="chakra-name">6. Ajna (Third Eye)</span>
+                <div class="chakra-color" style="background: #4a148c;"></div>
+            </div>
+            <div class="chakra-location">Between eyebrows</div>
+            <div class="chakra-details">
+                <div class="detail-section">
+                    <div class="detail-label">Anatomical Correlate</div>
+                    <div class="detail-content">
+                        <ul>
+                            <li>Pituitary gland (master endocrine regulator)</li>
+                            <li>Cavernous plexus</li>
+                            <li>Prefrontal cortex (executive function, intuition)</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="detail-section">
+                    <div class="detail-label">Physiological Function</div>
+                    <div class="detail-content">
+                        Hormonal regulation, vision processing, pattern recognition, decision-making
+                    </div>
+                </div>
+                <div class="detail-section">
+                    <div class="detail-label">Hormones</div>
+                    <div class="detail-content">Growth hormone, prolactin, ACTH, TSH, FSH, LH (controls other glands)</div>
+                </div>
+                <div class="detail-section">
+                    <div class="detail-label">Energetic Function</div>
+                    <div class="detail-content">Intuition, insight, clairvoyance, pattern recognition beyond logic</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="chakra" data-chakra="throat">
+            <div class="chakra-header">
+                <span class="chakra-name">5. Vishuddha (Throat)</span>
+                <div class="chakra-color" style="background: #1976d2;"></div>
+            </div>
+            <div class="chakra-location">Throat</div>
+            <div class="chakra-details">
+                <div class="detail-section">
+                    <div class="detail-label">Anatomical Correlate</div>
+                    <div class="detail-content">
+                        <ul>
+                            <li>Thyroid gland (metabolism regulation)</li>
+                            <li>Parathyroid (calcium/bone health)</li>
+                            <li>Cervical plexus</li>
+                            <li>Larynx, vocal cords</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="detail-section">
+                    <div class="detail-label">Physiological Function</div>
+                    <div class="detail-content">
+                        Metabolic rate, speech production, calcium regulation, temperature control
+                    </div>
+                </div>
+                <div class="detail-section">
+                    <div class="detail-label">Hormones</div>
+                    <div class="detail-content">T3, T4 (thyroid hormones), calcitonin, PTH (parathyroid hormone)</div>
+                </div>
+                <div class="detail-section">
+                    <div class="detail-label">Energetic Function</div>
+                    <div class="detail-content">Expression, communication, speaking truth, creative articulation</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="chakra" data-chakra="heart">
+            <div class="chakra-header">
+                <span class="chakra-name">4. Anahata (Heart)</span>
+                <div class="chakra-color" style="background: #4caf50;"></div>
+            </div>
+            <div class="chakra-location">Center of chest</div>
+            <div class="chakra-details">
+                <div class="detail-section">
+                    <div class="detail-label">Anatomical Correlate</div>
+                    <div class="detail-content">
+                        <ul>
+                            <li>Cardiac plexus</li>
+                            <li>Thymus gland (immune system, T-cell maturation)</li>
+                            <li>Heart, lungs</li>
+                            <li>Vagus nerve (parasympathetic)</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="detail-section">
+                    <div class="detail-label">Physiological Function</div>
+                    <div class="detail-content">
+                        Circulation, oxygenation, immune response, heart rate variability, stress regulation
+                    </div>
+                </div>
+                <div class="detail-section">
+                    <div class="detail-label">Neurotransmitters/Hormones</div>
+                    <div class="detail-content">Oxytocin (bonding), thymosin (immune), acetylcholine (vagal tone)</div>
+                </div>
+                <div class="detail-section">
+                    <div class="detail-label">Energetic Function</div>
+                    <div class="detail-content">Love, compassion, empathy, connection, emotional balance, bridge between lower/upper chakras</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="chakra" data-chakra="solar">
+            <div class="chakra-header">
+                <span class="chakra-name">3. Manipura (Solar Plexus)</span>
+                <div class="chakra-color" style="background: #ffc107;"></div>
+            </div>
+            <div class="chakra-location">Upper abdomen</div>
+            <div class="chakra-details">
+                <div class="detail-section">
+                    <div class="detail-label">Anatomical Correlate</div>
+                    <div class="detail-content">
+                        <ul>
+                            <li>Celiac plexus (solar plexus)</li>
+                            <li>Pancreas (blood sugar regulation)</li>
+                            <li>Adrenal glands (stress response)</li>
+                            <li>Stomach, liver, gallbladder</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="detail-section">
+                    <div class="detail-label">Physiological Function</div>
+                    <div class="detail-content">
+                        Digestion, glucose metabolism, stress hormone production, energy regulation
+                    </div>
+                </div>
+                <div class="detail-section">
+                    <div class="detail-label">Hormones</div>
+                    <div class="detail-content">Insulin, glucagon, cortisol, adrenaline (epinephrine), norepinephrine</div>
+                </div>
+                <div class="detail-section">
+                    <div class="detail-label">Energetic Function</div>
+                    <div class="detail-content">Personal power, willpower, confidence, action, transformation (digestion as metaphor)</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="chakra" data-chakra="sacral">
+            <div class="chakra-header">
+                <span class="chakra-name">2. Svadhisthana (Sacral)</span>
+                <div class="chakra-color" style="background: #ff6f00;"></div>
+            </div>
+            <div class="chakra-location">Lower abdomen (below navel)</div>
+            <div class="chakra-details">
+                <div class="detail-section">
+                    <div class="detail-label">Anatomical Correlate</div>
+                    <div class="detail-content">
+                        <ul>
+                            <li>Pelvic plexus</li>
+                            <li>Gonads (ovaries/testes)</li>
+                            <li>Reproductive organs</li>
+                            <li>Bladder, lower intestines</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="detail-section">
+                    <div class="detail-label">Physiological Function</div>
+                    <div class="detail-content">
+                        Sexual function, reproduction, fluid balance, elimination, creative drive
+                    </div>
+                </div>
+                <div class="detail-section">
+                    <div class="detail-label">Hormones</div>
+                    <div class="detail-content">Estrogen, progesterone, testosterone, oxytocin (during arousal/orgasm)</div>
+                </div>
+                <div class="detail-section">
+                    <div class="detail-label">Energetic Function</div>
+                    <div class="detail-content">Creativity, sexuality, pleasure, emotions, flow, sensuality, desire</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="chakra" data-chakra="root">
+            <div class="chakra-header">
+                <span class="chakra-name">1. Muladhara (Root)</span>
+                <div class="chakra-color" style="background: #d32f2f;"></div>
+            </div>
+            <div class="chakra-location">Base of spine / perineum</div>
+            <div class="chakra-details">
+                <div class="detail-section">
+                    <div class="detail-label">Anatomical Correlate</div>
+                    <div class="detail-content">
+                        <ul>
+                            <li>Sacral plexus</li>
+                            <li>Adrenal glands (fight/flight)</li>
+                            <li>Base of spine, legs, feet</li>
+                            <li>Colon, rectum</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="detail-section">
+                    <div class="detail-label">Physiological Function</div>
+                    <div class="detail-content">
+                        Survival response, fight/flight activation, grounding, structural support, elimination
+                    </div>
+                </div>
+                <div class="detail-section">
+                    <div class="detail-label">Hormones/Neurotransmitters</div>
+                    <div class="detail-content">Cortisol, adrenaline, norepinephrine (acute stress response)</div>
+                </div>
+                <div class="detail-section">
+                    <div class="detail-label">Energetic Function</div>
+                    <div class="detail-content">Safety, security, survival, grounding, connection to earth/physical reality, tribal belonging</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const chakras = document.querySelectorAll('.chakra');
+
+        chakras.forEach(chakra => {
+            chakra.addEventListener('click', () => {
+                // Toggle active state
+                const wasActive = chakra.classList.contains('active');
+
+                // Close all chakras
+                chakras.forEach(c => c.classList.remove('active'));
+
+                // If it wasn't active, make it active
+                if (!wasActive) {
+                    chakra.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

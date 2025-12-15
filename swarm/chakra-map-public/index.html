@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Consciousness Manifold</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Courier New', monospace;
+            background: #000;
+            color: #e0e0e0;
+            overflow: hidden;
+            position: relative;
+        }
+
+        #canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            cursor: move;
+            touch-action: none;
+        }
+
+        .info-panel {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 380px;
+            max-height: calc(100vh - 40px);
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 20px;
+            overflow-y: auto;
+            pointer-events: auto;
+            z-index: 100;
+            transition: all 0.3s ease;
+        }
+
+        .chakra-name {
+            font-size: 1.4rem;
+            font-weight: bold;
+            margin-bottom: 12px;
+            color: var(--chakra-color);
+            text-shadow: 0 0 20px var(--chakra-color);
+        }
+
+        .bio-system {
+            margin-bottom: 16px;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 8px;
+            border-left: 3px solid var(--chakra-color);
+        }
+
+        .system-label {
+            font-weight: bold;
+            margin-bottom: 6px;
+            opacity: 0.7;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 0.5px;
+        }
+
+        .system-content {
+            line-height: 1.6;
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .chemical-tag {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 3px 8px;
+            border-radius: 4px;
+            margin: 3px;
+            font-size: 0.8rem;
+            border: 1px solid var(--chakra-color);
+        }
+
+        .controls {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 8px;
+            padding: 12px;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(20px);
+            border-radius: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 100;
+        }
+
+        .chakra-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            background: var(--chakra-color);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .chakra-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: all 0.4s ease;
+        }
+
+        .chakra-btn.active {
+            border-color: #fff;
+            box-shadow: 0 0 30px var(--chakra-color), 0 0 60px var(--chakra-color);
+            transform: scale(1.2);
+        }
+
+        .chakra-btn.active::before {
+            width: 100%;
+            height: 100%;
+        }
+
+        .instruction {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: rgba(255, 255, 255, 0.3);
+            font-size: 0.85rem;
+            font-style: italic;
+            z-index: 99;
+            pointer-events: none;
+            text-align: center;
+        }
+
+        @media (max-width: 900px) {
+            .info-panel {
+                top: auto;
+                bottom: 100px;
+                right: 10px;
+                left: 10px;
+                width: auto;
+                max-height: 40vh;
+            }
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <div class="instruction">Drag to rotate • Scroll to zoom • Click chakra spheres</div>
+
+    <canvas id="canvas"></canvas>
+
+    <div class="info-panel" id="infoPanel" style="--chakra-color: #4caf50;">
+        <div id="info-content"></div>
+    </div>
+
+    <div class="controls">
+        <button class="chakra-btn" data-chakra="crown" style="--chakra-color: #9b59b6;"></button>
+        <button class="chakra-btn" data-chakra="third-eye" style="--chakra-color: #4a148c;"></button>
+        <button class="chakra-btn" data-chakra="throat" style="--chakra-color: #1976d2;"></button>
+        <button class="chakra-btn active" data-chakra="heart" style="--chakra-color: #4caf50;"></button>
+        <button class="chakra-btn" data-chakra="solar" style="--chakra-color: #ffc107;"></button>
+        <button class="chakra-btn" data-chakra="sacral" style="--chakra-color: #ff6f00;"></button>
+        <button class="chakra-btn" data-chakra="root" style="--chakra-color: #d32f2f;"></button>
+    </div>
+
+    <script>
+        const chakraData = {
+            crown: {
+                name: "Crown - Sahasrara ✨",
+                color: "#9b59b6",
+                unity: "Where consciousness returns to source. The pineal translates light into wisdom. All paths converge here. You are the witness, the observed, and the observing.",
+                path: {
+                    title: "Right Concentration (Samadhi)",
+                    tradition: "Buddhist Dhyana • Daoist Return to Wu • Sufi Fana (dissolution into Allah)",
+                    teaching: "不執著 (wú zhí zhuó) - Non-attachment. The mind rests in itself without grasping. Allahumdulillah - all praise returns to the source."
+                },
+                medicine: {
+                    title: "Humility Medicine",
+                    formula: ["L-Theanine", "Passionflower", "Magnesium L-Threonate", "Reishi"],
+                    action: "Alpha wave induction → GABA modulation → Cortical quieting → Pineal decalcification → Ego dissolution through neurochemistry"
+                },
+                embodiment: "Your pineal gland, no larger than a grain of rice, sits at the geometric center of your brain. Each day it transforms serotonin into melatonin as light fades to dark. In deepest sleep and meditation, melatonin becomes DMT - the molecule of mystical vision. Your cerebral cortex wraps around everything, integrating all experience into one witnessing awareness. The circadian rhythm isn't just biology - it's your body tracking the cosmic dance of Earth and Sun. You are a timekeeper. A light translator. A consciousness made flesh."
+            },
+            "third-eye": {
+                name: "Third Eye - Ajna 🧿",
+                color: "#4a148c",
+                unity: "The conductor. Pituitary orchestrates all endocrine harmony. Prefrontal cortex sees patterns. Here physiology becomes wisdom.",
+                path: {
+                    title: "Right View (Samma Ditthi)",
+                    tradition: "Buddhist Wisdom • Daoist Clear Seeing • Zoroastrian Good Thoughts (Humata)",
+                    teaching: "見性 (jiàn xìng) - Seeing your true nature. Not imposing view, but receiving what is. اَلْعَقْل (al-'aql) - Divine intellect recognizes itself."
+                },
+                medicine: {
+                    title: "Contentment Medicine",
+                    formula: ["Lemon Balm", "L-Tyrosine", "Phosphatidylserine", "Lion's Mane"],
+                    action: "Dopamine substrate support without craving → Prefrontal GABA modulation → Pituitary calming → Endocrine harmony"
+                },
+                embodiment: "Your pituitary dangles from your brain's center like a conductor's baton, orchestrating every endocrine gland in your body. It releases growth hormone, thyroid stimulators, reproductive signals, stress messengers - six major hormones flowing in rhythmic pulses. Your prefrontal cortex sits just behind your forehead, seeing patterns, making plans, recognizing faces and futures. Together they ask: What is growth? What needs attention? What deserves to reproduce? The third eye doesn't see - it RECOGNIZES. It knows before knowing how it knows."
+            },
+            throat: {
+                name: "Throat - Vishuddha 🗣️",
+                color: "#1976d2",
+                unity: "Expression is sacred. Thyroid governs metabolic flame. Speak only what sustains the fire. Structure (calcium) enables truth to take form.",
+                path: {
+                    title: "Right Speech (Samma Vaca)",
+                    tradition: "Buddhist Compassionate Speech • Zoroastrian Good Words (Hukhta) • Sufi Dhikr (remembrance of Allah)",
+                    teaching: "善言 (shàn yán) - Beneficial words. Speech as offering. لَا إِلَٰهَ إِلَّا ٱللَّٰهُ (Lā ilāha illā Allāh) - There is no deity but Allah. Even silence speaks truth."
+                },
+                medicine: {
+                    title: "Peace Medicine",
+                    formula: ["Ashwagandha", "L-Theanine", "Magnesium Glycinate", "Holy Basil"],
+                    action: "Thyroid modulation without suppression → Metabolic stabilization → Calcium support → Laryngeal relaxation → Safe expression"
+                },
+                embodiment: "Your thyroid wraps around your windpipe like a butterfly, secreting T3 and T4 to set your metabolic flame - how fast you burn, how warm you stay, how quickly you think. Behind it, four tiny parathyroid glands control calcium, the mineral that structures bones and signals nerves. Your larynx holds vocal cords that vibrate truth into sound. The cervical plexus delivers sensation to skin and movement to muscle. Speaking isn't just air through tissue - it's METABOLISM TAKING FORM. Every word costs energy. Every silence conserves it. Choose wisely."
+            },
+            heart: {
+                name: "Heart - Anahata 💚",
+                color: "#4caf50",
+                unity: "The bridge where separation becomes love. Vagus nerve unites gut-feeling and brain-knowing. Thymus teaches self from other. Heart rhythm reflects the cosmos.",
+                path: {
+                    title: "Right Intention (Samma Sankappa)",
+                    tradition: "Buddhist Metta (loving-kindness) • Sufi Ishq (divine love) • Universal Compassion",
+                    teaching: "慈悲 (cí bēi) - Compassion. محبة (maḥabbah) - Love as the path itself. Ubuntu: I am because we are. The heart knows before the mind explains."
+                },
+                medicine: {
+                    title: "Generosity Medicine",
+                    formula: ["Hawthorn Berry", "CoQ10", "Magnesium Taurate", "Rose"],
+                    action: "Vagal nerve support → HRV coherence → Thymus nourishment → Oxytocin sensitivity restoration → Open circulation"
+                },
+                embodiment: "Your vagus nerve wanders from brainstem to belly, the great connector between gut-feeling and heart-knowing. It slows your heart, deepens your breath, whispers 'you are safe' when threat passes. Behind your sternum, your thymus teaches T-cells to recognize SELF from NOT-SELF - the biological ground of identity. When you feel love, oxytocin floods through, bonding you to other. When you feel connected, your heart rate becomes variable, responsive, ALIVE. This isn't metaphor - your heart LITERALLY synchronizes with those you love. You are an electromagnetic broadcast of care."
+            },
+            solar: {
+                name: "Solar Plexus - Manipura ☀️",
+                color: "#ffc107",
+                unity: "Power as stewardship, not dominance. Pancreas transforms fuel to will. Adrenals answer threat with wisdom. Digestion is alchemy - matter becomes spirit.",
+                path: {
+                    title: "Right Effort (Samma Vayama)",
+                    tradition: "Buddhist Diligence • Zoroastrian Good Deeds (Hvarshta) • Daoist Effortless Action (Wu Wei)",
+                    teaching: "中庸 (zhōng yōng) - The golden mean. Not force, not collapse. Sustained presence. جهاد النفس (jihad an-nafs) - Struggle with the ego, not against the world."
+                },
+                medicine: {
+                    title: "Temperance Medicine",
+                    formula: ["Chromium Picolinate", "Berberine", "Cinnamon", "Gymnema"],
+                    action: "Glucose stabilization → Insulin sensitivity restoration → Pancreatic rest → Adrenal buffering → Steady power without depletion"
+                },
+                embodiment: "Your solar plexus cradles the largest autonomic nerve cluster in your body - a golden sun of signals radiating will into world. Pancreas dances the glucose dance: insulin for storage, glucagon for release, every meal transformed into usable life. Adrenals stand sentinel on each kidney: cortisol for sustained effort, adrenaline for immediate action, norepinephrine to sharpen focus. Together they ask: What fuels you? What depletes you? Digestion isn't passive absorption - it's alchemical transformation. Matter spirals into energy spirals into consciousness. Every bite becomes you. Every choice shapes your fire."
+            },
+            sacral: {
+                name: "Sacral - Svadhisthana 🌊",
+                color: "#ff6f00",
+                unity: "Creation as worship. Sex hormones sing life into form. Water flows without forcing. Here potential becomes presence, desire becomes devotion.",
+                path: {
+                    title: "Right Action (Samma Kammanta)",
+                    tradition: "Buddhist Ethical Conduct • Sufi Adab (sacred courtesy) • Daoist Natural Virtue (De)",
+                    teaching: "德 (dé) - Virtue without virtue. Act as water acts - finding the lowest place, nourishing all. سَكِينَة (sakīnah) - Divine tranquility in movement."
+                },
+                medicine: {
+                    title: "Devotion Medicine",
+                    formula: ["Maca Root", "Shatavari/Tribulus", "Zinc", "Damiana"],
+                    action: "Gonadal substrate replenishment → Hormonal balance without force → Dopamine sensitivity restoration → Oxytocin support → Pleasure with presence"
+                },
+                embodiment: "Your pelvic plexus weaves through your lower belly, orchestrating the dance of creation. Gonads - ovaries or testes - pulse with monthly or daily rhythms, secreting estrogen's softening, progesterone's preparation, testosterone's drive toward form. Oxytocin floods during orgasm, birth, breastfeeding, deep trust - the molecule of bonding made flesh. Water comprises 60% of your body, flowing through vessels, cells, spaces between. Here pleasure isn't indulgence - it's information. Desire teaches: What wants to be born through you? What wants to merge? What wants to FLOW? The sacral doesn't create through force. It creates through allowing. Like water finding every crack, filling every vessel, becoming whatever shape the moment requires."
+            },
+            root: {
+                name: "Root - Muladhara 🌱",
+                color: "#d32f2f",
+                unity: "Survival as foundation of all paths. Fight/flight is biology's wisdom. Spine holds you upright. Elimination releases what no longer serves. You cannot transcend what you have not embodied.",
+                path: {
+                    title: "Right Livelihood (Samma Ajiva)",
+                    tradition: "Buddhist Ethical Work • Daoist Living in Harmony (Wu Wei in daily life) • Sufi Service (Khidma)",
+                    teaching: "正命 (zhèng mìng) - Right life. Work as prayer. Every action sustains or depletes the whole. رِزْق (rizq) - Sustenance is divine gift. Receive, use, release."
+                },
+                medicine: {
+                    title: "Diligence Medicine",
+                    formula: ["Rhodiola Rosea", "Cordyceps", "Vitamin D3+K2", "Ashwagandha"],
+                    action: "Adrenal restoration → Mitochondrial support → Cortisol rhythm reset → Structural grounding → Safe embodiment → Action becomes possible"
+                },
+                embodiment: "Your sacral plexus branches from the base of your spine, innervating legs, pelvic floor, the structures that let you STAND. Your adrenal medulla - the inner core of those glands - fires adrenaline and norepinephrine in microseconds when threat appears: pupils dilate, heart pounds, blood rushes to muscles. This is not pathology. This is four billion years of survival wisdom encoded in tissue. Your spine stacks twenty-four vertebrae from tailbone to skull, each separated by shock-absorbing discs. Gravity pulls you down. Structure holds you up. The root doesn't transcend the body - it IS the body. You cannot rise if you won't root. You cannot open if you don't feel safe. Every spiritual flight begins with THIS: standing on Earth, breathing air, claiming space, knowing you have the right to BE here."
+            }
+        };
+
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const infoPanel = document.getElementById('infoPanel');
+        const infoContent = document.getElementById('info-content');
+        const buttons = document.querySelectorAll('.chakra-btn');
+
+        let width = canvas.width = window.innerWidth;
+        let height = canvas.height = window.innerHeight;
+        let time = 0;
+        let rotationX = 0.3;
+        let rotationY = 0;
+        let rotationZ = 0;
+        let zoom = 1;
+        let isDragging = false;
+        let lastMouseX = 0;
+        let lastMouseY = 0;
+        let activeChakra = 'heart';
+
+        window.addEventListener('resize', () => {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        });
+
+        // Chakra nodes - each exists in multiple dimensional frequencies
+        const chakras = [
+            { key: 'crown', y: -3, color: '#9b59b6', frequency: 963, particles: [] },
+            { key: 'third-eye', y: -2, color: '#4a148c', frequency: 852, particles: [] },
+            { key: 'throat', y: -1, color: '#1976d2', frequency: 741, particles: [] },
+            { key: 'heart', y: 0, color: '#4caf50', frequency: 639, particles: [] },
+            { key: 'solar', y: 1, color: '#ffc107', frequency: 528, particles: [] },
+            { key: 'sacral', y: 2, color: '#ff6f00', frequency: 417, particles: [] },
+            { key: 'root', y: 3, color: '#d32f2f', frequency: 396, particles: [] }
+        ];
+
+        // Initialize particle field for each chakra
+        chakras.forEach(chakra => {
+            for (let i = 0; i < 200; i++) {
+                const angle = Math.random() * Math.PI * 2;
+                const radius = Math.random() * 2 + 0.5;
+                const speed = Math.random() * 0.02 + 0.005;
+                chakra.particles.push({
+                    angle,
+                    radius,
+                    speed,
+                    phase: Math.random() * Math.PI * 2,
+                    z: Math.random() * 4 - 2
+                });
+            }
+        });
+
+        // Rotation matrix math
+        function rotate3D(x, y, z, rx, ry, rz) {
+            // Rotate around X axis
+            let y1 = y * Math.cos(rx) - z * Math.sin(rx);
+            let z1 = y * Math.sin(rx) + z * Math.cos(rx);
+
+            // Rotate around Y axis
+            let x2 = x * Math.cos(ry) + z1 * Math.sin(ry);
+            let z2 = -x * Math.sin(ry) + z1 * Math.cos(ry);
+
+            // Rotate around Z axis
+            let x3 = x2 * Math.cos(rz) - y1 * Math.sin(rz);
+            let y3 = x2 * Math.sin(rz) + y1 * Math.cos(rz);
+
+            return { x: x3, y: y3, z: z2 };
+        }
+
+        function project(x, y, z) {
+            const perspective = 800;
+            const scale = perspective / (perspective + z * 100);
+            return {
+                x: width / 2 + x * scale * zoom * 80,
+                y: height / 2 + y * scale * zoom * 80,
+                scale
+            };
+        }
+
+        function hexToRgb(hex) {
+            const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            return result ? {
+                r: parseInt(result[1], 16),
+                g: parseInt(result[2], 16),
+                b: parseInt(result[3], 16)
+            } : null;
+        }
+
+        function drawChakra(chakra, active) {
+            const rgb = hexToRgb(chakra.color);
+
+            // Core sphere with pulsing energy
+            const coreSize = active ? 25 : 15;
+            const pulse = Math.sin(time * 2 + chakra.frequency / 100) * 0.3 + 0.7;
+
+            const rotated = rotate3D(0, chakra.y, 0, rotationX, rotationY, rotationZ);
+            const proj = project(rotated.x, rotated.y, rotated.z);
+
+            // Enhanced glow layers with shadow blur
+            ctx.shadowBlur = active ? 40 : 20;
+            ctx.shadowColor = chakra.color;
+            for (let i = 6; i > 0; i--) {
+                ctx.beginPath();
+                ctx.arc(proj.x, proj.y, coreSize * i * 0.4 * pulse * proj.scale, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${0.08 * proj.scale})`;
+                ctx.fill();
+            }
+            ctx.shadowBlur = 0;
+
+            // Core
+            ctx.beginPath();
+            ctx.arc(proj.x, proj.y, coreSize * proj.scale * pulse, 0, Math.PI * 2);
+            const gradient = ctx.createRadialGradient(
+                proj.x, proj.y, 0,
+                proj.x, proj.y, coreSize * proj.scale * pulse
+            );
+            gradient.addColorStop(0, `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 1)`);
+            gradient.addColorStop(0.5, `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.8)`);
+            gradient.addColorStop(1, `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.2)`);
+            ctx.fillStyle = gradient;
+            ctx.fill();
+
+            // Particle field - dimensional frequencies
+            chakra.particles.forEach(p => {
+                p.angle += p.speed;
+                p.phase += 0.01;
+
+                const wobble = Math.sin(p.phase) * 0.3;
+                const x = Math.cos(p.angle) * (p.radius + wobble);
+                const z = Math.sin(p.angle) * (p.radius + wobble);
+                const y = chakra.y + Math.sin(p.angle * 3 + time) * 0.4;
+
+                const rotated = rotate3D(x, y, z + p.z, rotationX, rotationY, rotationZ);
+                const proj = project(rotated.x, rotated.y, rotated.z);
+
+                const alpha = (rotated.z + 5) / 10;
+                if (alpha > 0) {
+                    // Particle glow
+                    ctx.shadowBlur = 8;
+                    ctx.shadowColor = chakra.color;
+                    ctx.beginPath();
+                    ctx.arc(proj.x, proj.y, 2 * proj.scale, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${alpha * 0.7})`;
+                    ctx.fill();
+                    ctx.shadowBlur = 0;
+                }
+            });
+
+            // Enhanced dimensional rings with glow
+            ctx.shadowBlur = 10;
+            ctx.shadowColor = chakra.color;
+            for (let ring = 0; ring < 4; ring++) {
+                const ringRadius = (ring + 1) * 0.8;
+                const ringPoints = 80;
+
+                ctx.beginPath();
+                for (let i = 0; i <= ringPoints; i++) {
+                    const angle = (i / ringPoints) * Math.PI * 2;
+                    const x = Math.cos(angle) * ringRadius;
+                    const z = Math.sin(angle) * ringRadius;
+                    const y = chakra.y + Math.sin(angle * 4 + time + ring) * 0.25;
+
+                    const rotated = rotate3D(x, y, z, rotationX, rotationY, rotationZ);
+                    const proj = project(rotated.x, rotated.y, rotated.z);
+
+                    if (i === 0) ctx.moveTo(proj.x, proj.y);
+                    else ctx.lineTo(proj.x, proj.y);
+                }
+                const ringAlpha = active ? 0.5 : 0.35;
+                ctx.strokeStyle = `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${ringAlpha * proj.scale})`;
+                ctx.lineWidth = active ? 2.5 : 1.8;
+                ctx.stroke();
+            }
+            ctx.shadowBlur = 0;
+        }
+
+        // Enhanced connection lines with glow
+        function drawConnections() {
+            ctx.shadowBlur = 15;
+            for (let i = 0; i < chakras.length - 1; i++) {
+                const c1 = chakras[i];
+                const c2 = chakras[i + 1];
+
+                const rot1 = rotate3D(0, c1.y, 0, rotationX, rotationY, rotationZ);
+                const rot2 = rotate3D(0, c2.y, 0, rotationX, rotationY, rotationZ);
+                const proj1 = project(rot1.x, rot1.y, rot1.z);
+                const proj2 = project(rot2.x, rot2.y, rot2.z);
+
+                ctx.beginPath();
+                ctx.moveTo(proj1.x, proj1.y);
+                ctx.lineTo(proj2.x, proj2.y);
+
+                const gradient = ctx.createLinearGradient(proj1.x, proj1.y, proj2.x, proj2.y);
+                gradient.addColorStop(0, c1.color + '66');
+                gradient.addColorStop(0.5, c1.color + '88');
+                gradient.addColorStop(1, c2.color + '66');
+                ctx.strokeStyle = gradient;
+                ctx.shadowColor = c1.color;
+                ctx.lineWidth = 3;
+                ctx.stroke();
+            }
+            ctx.shadowBlur = 0;
+        }
+
+        function animate() {
+            time += 0.02;
+
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.08)';
+            ctx.fillRect(0, 0, width, height);
+
+            // Auto-rotate when not dragging
+            if (!isDragging) {
+                rotationY += 0.003;
+            }
+
+            // Draw connections first (behind chakras)
+            drawConnections();
+
+            // Draw chakras back to front
+            const sortedChakras = [...chakras].sort((a, b) => {
+                const rotA = rotate3D(0, a.y, 0, rotationX, rotationY, rotationZ);
+                const rotB = rotate3D(0, b.y, 0, rotationX, rotationY, rotationZ);
+                return rotA.z - rotB.z;
+            });
+
+            sortedChakras.forEach(chakra => {
+                drawChakra(chakra, chakra.key === activeChakra);
+            });
+
+            requestAnimationFrame(animate);
+        }
+
+        // Mouse/touch controls
+        canvas.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            lastMouseX = e.clientX;
+            lastMouseY = e.clientY;
+        });
+
+        canvas.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+
+            const deltaX = e.clientX - lastMouseX;
+            const deltaY = e.clientY - lastMouseY;
+
+            rotationY += deltaX * 0.005;
+            rotationX += deltaY * 0.005;
+
+            rotationX = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, rotationX));
+
+            lastMouseX = e.clientX;
+            lastMouseY = e.clientY;
+        });
+
+        canvas.addEventListener('mouseup', () => isDragging = false);
+        canvas.addEventListener('mouseleave', () => isDragging = false);
+
+        canvas.addEventListener('touchstart', (e) => {
+            if (e.touches.length === 1) {
+                isDragging = true;
+                lastMouseX = e.touches[0].clientX;
+                lastMouseY = e.touches[0].clientY;
+            }
+        });
+
+        canvas.addEventListener('touchmove', (e) => {
+            if (!isDragging || e.touches.length !== 1) return;
+            e.preventDefault();
+
+            const deltaX = e.touches[0].clientX - lastMouseX;
+            const deltaY = e.touches[0].clientY - lastMouseY;
+
+            rotationY += deltaX * 0.005;
+            rotationX += deltaY * 0.005;
+
+            rotationX = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, rotationX));
+
+            lastMouseX = e.touches[0].clientX;
+            lastMouseY = e.touches[0].clientY;
+        });
+
+        canvas.addEventListener('touchend', () => isDragging = false);
+
+        canvas.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            zoom *= (1 - e.deltaY * 0.001);
+            zoom = Math.max(0.3, Math.min(3, zoom));
+        });
+
+        // Chakra selection
+        function activate(key) {
+            activeChakra = key;
+
+            buttons.forEach(btn => btn.classList.remove('active'));
+            document.querySelector(`[data-chakra="${key}"]`).classList.add('active');
+
+            const data = chakraData[key];
+            infoPanel.style.setProperty('--chakra-color', data.color);
+
+            infoContent.innerHTML = `
+                <div class="chakra-name">${data.name}</div>
+                <div class="bio-system" style="background: rgba(0,0,0,0.3); border-left-color: ${data.color};">
+                    <div class="system-label">Unity</div>
+                    <div class="system-content" style="font-style: italic;">${data.unity}</div>
+                </div>
+                <div class="bio-system" style="background: linear-gradient(135deg, rgba(255,215,0,0.1), rgba(138,43,226,0.1)); border-left-color: gold;">
+                    <div class="system-label" style="color: gold;">✨ ${data.path.title}</div>
+                    <div class="system-content" style="font-style: italic; color: #f0e68c; margin-top: 8px; opacity: 0.8; font-size: 0.85rem;">
+                        ${data.path.tradition}
+                    </div>
+                    <div class="system-content" style="margin-top: 10px; color: #fffacd; line-height: 1.7;">
+                        ${data.path.teaching}
+                    </div>
+                </div>
+                <div class="bio-system" style="background: linear-gradient(135deg, rgba(76,175,80,0.1), rgba(102,255,153,0.1)); border-left-color: #66ff99;">
+                    <div class="system-label" style="color: #66ff99;">🌿 ${data.medicine.title}</div>
+                    <div class="system-content" style="margin-top: 8px;">
+                        ${data.medicine.formula.map(herb => `<span class="chemical-tag">${herb}</span>`).join('')}
+                    </div>
+                    <div class="system-content" style="margin-top: 10px; color: #99ff99; line-height: 1.6; font-size: 0.85rem;">
+                        ${data.medicine.action}
+                    </div>
+                </div>
+                <div class="bio-system" style="background: linear-gradient(135deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02)); border-left-color: ${data.color};">
+                    <div class="system-label" style="color: ${data.color};">🧬 Living Biology</div>
+                    <div class="system-content" style="margin-top: 12px; color: rgba(255,255,255,0.95); line-height: 1.8; font-size: 0.9rem; font-weight: 300;">
+                        ${data.embodiment}
+                    </div>
+                </div>
+            `;
+        }
+
+        buttons.forEach(btn => {
+            btn.addEventListener('click', () => activate(btn.dataset.chakra));
+        });
+
+        // Click chakra spheres directly
+        canvas.addEventListener('click', (e) => {
+            if (isDragging) return;
+
+            const rect = canvas.getBoundingClientRect();
+            const mouseX = e.clientX - rect.left;
+            const mouseY = e.clientY - rect.top;
+
+            let closestChakra = null;
+            let closestDist = Infinity;
+
+            chakras.forEach(chakra => {
+                const rotated = rotate3D(0, chakra.y, 0, rotationX, rotationY, rotationZ);
+                const proj = project(rotated.x, rotated.y, rotated.z);
+
+                const dist = Math.sqrt(
+                    Math.pow(mouseX - proj.x, 2) +
+                    Math.pow(mouseY - proj.y, 2)
+                );
+
+                if (dist < 40 * proj.scale && dist < closestDist) {
+                    closestDist = dist;
+                    closestChakra = chakra.key;
+                }
+            });
+
+            if (closestChakra) activate(closestChakra);
+        });
+
+        // Initialize
+        activate('heart');
+        animate();
+    </script>
+</body>
+</html>
